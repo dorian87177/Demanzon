@@ -1,5 +1,13 @@
 package com.demanzon.app.javafx;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.demanzon.app.DTO.DTOActualizacion;
+import com.demanzon.app.DTO.DTOVersion;
+import com.demanzon.app.controller.TestControlador;
+import com.demanzon.app.service.ServicioAPI;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -21,11 +29,11 @@ public class JavaFxApp extends Application {
         area.setEditable(false);
         area.setPrefHeight(200);
 
-        Button btnMostrarV1 = new Button("Mostrar Versión 1");
-        Button btnMostrarV2 = new Button("Mostrar Versión 2");
+        Button btnMostrarV1 = new Button("Mostrar Versión Calendario de Anime");
+        Button btnMostrarV2 = new Button("Mostrar Versión Calendario de Anime premium");
 
-        Button btnActualizarV1 = new Button("Actualizar Versión 1");
-        Button btnActualizarV2 = new Button("Actualizar Versión 2");
+        Button btnActualizarV1 = new Button("Actualizar Versión Calendario de Anime");
+        Button btnActualizarV2 = new Button("Actualizar Versión Calendario de Anime premium");
 
         btnMostrarV1.setOnAction(e -> area.setText("Mostrando versión 1..."));
         btnMostrarV2.setOnAction(e -> area.setText("Mostrando versión 2..."));

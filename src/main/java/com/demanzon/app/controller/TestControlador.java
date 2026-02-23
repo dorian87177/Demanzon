@@ -26,4 +26,14 @@ public class TestControlador {
     public DTOActualizacion actualizacion(@RequestParam String version) {
         return servicioAPI.obtenerActualizacion(version);
     }
+
+    @GetMapping("/api/v1/animecalendarpro/appversion")
+    public DTOVersion versionPremium() {
+        return servicioAPI.obtenerVersionPremium();
+    }
+
+    @GetMapping("/api/v1/animecalendarpro/updateAppVersion")
+    public DTOActualizacion actualizacionPremium(@RequestParam String version) {
+        return servicioAPI.obtenerActualizacionPremium(version);
+    }
 }

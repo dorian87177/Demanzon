@@ -22,4 +22,12 @@ public class ServicioAPI {
     public DTOActualizacion obtenerActualizacion(String version) {
         return clienteAPI.actualizarVersion(version);
     }
+
+    public DTOVersion obtenerVersionPremium() {
+        return clienteAPI.obtenerVersionPremium();
+    }
+
+    public DTOActualizacion obtenerActualizacionPremium(String version) {
+        return clienteAPI.actualizarVersionPremium(version);
+    }
 }
