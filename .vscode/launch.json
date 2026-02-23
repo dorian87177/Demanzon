@@ -8,6 +8,17 @@
             "mainClass": "com.demanzon.app.AppApplication",
             "projectName": "app",
             "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=63961 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=app"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-JavaFxApp<app>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.demanzon.app.javafx.JavaFxApp",
+            "projectName": "app",
+            "args": "",
             "envFile": "${workspaceFolder}/.env"
         }
     ]
