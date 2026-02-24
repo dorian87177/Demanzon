@@ -17,7 +17,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.BorderPane;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 public class JavaFxApp extends Application {
@@ -34,23 +38,69 @@ public class JavaFxApp extends Application {
     @Override
     public void start(Stage stage) {
 
+        Image imagenKawai = new Image(getClass().getResourceAsStream("/images/chicaKawai.jpg"));
+        ImageView imagenView = new ImageView(imagenKawai);
+        Label tituloJapones = new Label("アニメカレンダー");
+        HBox encabezado = new HBox(15, imagenView, tituloJapones);
+
         Label labelVersionAC = new Label();
         Label labelVersionACP = new Label();
+        Button btnObtenerVersionAC = new Button("Mostrar Versión Calendario de Anime");
+        Button btnObtenerVersionACP = new Button("Mostrar Versión Calendario de Anime premium");
+        Button btnActualizarVersionAC = new Button("Actualizar Versión Calendario de Anime");
+        Button btnActualizarVersionACP = new Button("Actualizar Versión Calendario de Anime premium");
+        TextField txtActualizarVersionAC = new TextField();
+        TextField txtActualizarVersionACP = new TextField();
+
+        HBox filaV1 = new HBox(10, btnObtenerVersionAC, labelVersionAC);
+        HBox filaV2 = new HBox(10, btnObtenerVersionACP, labelVersionACP);
+        HBox filaActualizarV1 = new HBox(10, btnActualizarVersionAC, txtActualizarVersionAC);
+        HBox filaActualizarV2 = new HBox(10, btnActualizarVersionACP, txtActualizarVersionACP);
+
+        VBox seccionAC = new VBox(10, filaV1, filaActualizarV1);
+        VBox seccionACP = new VBox(10, filaV2, filaActualizarV2);
+        VBox contenedor = new VBox(15, seccionAC, seccionACP);
+        BorderPane root = new BorderPane();
+        Scene scene = new Scene(root, 475, 375);
+
+        imagenView.setFitHeight(120);
+        imagenView.setFitWidth(120);
+        imagenView.setPreserveRatio(true);
+
+        tituloJapones.setStyle("-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #000000;");
+
+        encabezado.setAlignment(Pos.CENTER_LEFT);
+        encabezado.setPadding(new Insets(15));
+        encabezado.setStyle("-fx-background-color: #FFE5F0;");
 
         labelVersionAC.setStyle("-fx-font-weight: bold;");
         labelVersionACP.setStyle("-fx-font-weight: bold;");
 
-        Button btnObtenerVersionAC = new Button("Mostrar Versión Calendario de Anime");
-        Button btnObtenerVersionACP = new Button("Mostrar Versión Calendario de Anime premium");
+        btnObtenerVersionAC.setStyle("-fx-base: #D8BFD8; -fx-font-size: 11;");
+        btnObtenerVersionACP.setStyle("-fx-base: #ADD8E6; -fx-font-size: 11;");
+        btnActualizarVersionAC.setStyle("-fx-base: #D8BFD8; -fx-font-size: 11;");
+        btnActualizarVersionACP.setStyle("-fx-base: #ADD8E6; -fx-font-size: 11;");
 
-        Button btnActualizarVersionAC = new Button("Actualizar Versión Calendario de Anime");
-        Button btnActualizarVersionACP = new Button("Actualizar Versión Calendario de Anime premium");
-
-        TextField txtActualizarVersionAC = new TextField();
         txtActualizarVersionAC.setPromptText("Nueva versión normal");
-
-        TextField txtActualizarVersionACP = new TextField();
         txtActualizarVersionACP.setPromptText("Nueva versión premium");
+
+        filaV1.setAlignment(Pos.CENTER_LEFT);
+        filaV2.setAlignment(Pos.CENTER_LEFT);
+        filaActualizarV1.setAlignment(Pos.CENTER_LEFT);
+        filaActualizarV2.setAlignment(Pos.CENTER_LEFT);
+
+        seccionAC.setPadding(new Insets(12));
+        seccionAC.setStyle("-fx-background-color: #F5E6F5;");
+
+        seccionACP.setPadding(new Insets(12));
+        seccionACP.setStyle("-fx-background-color: #E5F0FF;");
+
+        contenedor.setPadding(new Insets(15));
+        contenedor.setStyle("-fx-background-color: #FFF0F7;");
+
+        root.setTop(encabezado);
+        root.setCenter(contenedor);
+        root.setStyle("-fx-background-color: #FFF0F7;");
 
         btnObtenerVersionAC.setOnAction(e -> {
 
@@ -159,21 +209,6 @@ public class JavaFxApp extends Application {
 
             new Thread(task).start();
         });
-
-        HBox filaV1 = new HBox(10, btnObtenerVersionAC, labelVersionAC);
-        HBox filaV2 = new HBox(10, btnObtenerVersionACP, labelVersionACP);
-        HBox filaActualizarV1 = new HBox(10, btnActualizarVersionAC, txtActualizarVersionAC);
-        HBox filaActualizarV2 = new HBox(10, btnActualizarVersionACP, txtActualizarVersionACP);
-
-        VBox root = new VBox(15,
-                filaV1,
-                filaV2,
-                filaActualizarV1,
-                filaActualizarV2);
-
-        root.setPadding(new Insets(20));
-
-        Scene scene = new Scene(root, 500, 200);
 
         stage.setTitle("Gestor de Versiones");
         stage.setScene(scene);
