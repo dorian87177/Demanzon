@@ -4,3 +4,4 @@
 - Añadir un botón para incrementar el número de versión
 - Poder especificar la url de la api y que se guarde la última usada
 - Cuando inicie la aplicación y se conecte a la api que este pregunte a ping y devuelva un resultado de error o éxito
+- Hacer un ejecutable para el programa
