@@ -1,0 +1,6 @@
+- Cambiar anime premium a anime pro
+- Comprobar que el formato de versión sea correcto y que se capture el error en caso de haberlo
+- Añadir una ventana emergente de error y una confirmación de éxito
+- Añadir un botón para incrementar el número de versión
+- Poder especificar la url de la api y que se guarde la última usada
+- Cuando inicie la aplicación y se conecte a la api que este pregunte a ping y devuelva un resultado de error o éxito
