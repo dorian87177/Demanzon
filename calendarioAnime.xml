@@ -2,8 +2,8 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>C:\Users\Miguel Ángel\OneDrive\Documentos\dam2\empresa\Demanzon\target\app-0.0.1-SNAPSHOT.jar</jar>
-  <outfile>C:\Users\Miguel Ángel\OneDrive\Documentos\dam2\empresa\Demanzon\calendarioAnime.exe</outfile>
+  <jar>target\app-0.0.1-SNAPSHOT.jar</jar>
+  <outfile>calendarioAnime.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
@@ -13,7 +13,7 @@
   <stayAlive>false</stayAlive>
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
-  <icon>C:\Users\Miguel Ángel\OneDrive\Documentos\dam2\empresa\Demanzon\src\main\resources\images\anime_calendar_icon.ico</icon>
+  <icon>src\main\resources\images\anime_calendar_icon.ico</icon>
   <jre>
     <path>%JAVA_HOME%;%PATH%</path>
     <requiresJdk>false</requiresJdk>
