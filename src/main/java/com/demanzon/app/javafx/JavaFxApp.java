@@ -62,6 +62,7 @@ public class JavaFxApp extends Application {
         Label labelIconoActualizacionACP = new Label();
         Label conexionExitosa = new Label();
         Label entornoAPI = new Label();
+        Label labelIconoPing = new Label();
         Button btnObtenerVersionAC = new Button("Mostrar Versión Calendario de Anime");
         Button btnObtenerVersionACP = new Button("Mostrar Versión Calendario de Anime pro");
         Button btnActualizarVersionAC = new Button("Actualizar Versión Calendario de Anime");
@@ -85,7 +86,7 @@ public class JavaFxApp extends Application {
         labelsPing.setAlignment(Pos.CENTER_RIGHT);
         labelsPing.setMaxWidth(Double.MAX_VALUE);
 
-        HBox filaPing = new HBox(10, btnPing, labelsPing);
+        HBox filaPing = new HBox(10, btnPing, labelsPing, labelIconoPing);
         HBox.setHgrow(labelsPing, Priority.ALWAYS);
 
         VBox seccionAC = new VBox(10, filaV1, filaActualizarV1, filaIncrementarV1);
@@ -111,6 +112,7 @@ public class JavaFxApp extends Application {
         labelMensajeActualizacionACP.setStyle("-fx-font-weight: bold;");
         labelIconoActualizacionAC.setStyle("-fx-font-size: 18; -fx-font-weight: bold;");
         labelIconoActualizacionACP.setStyle("-fx-font-size: 18; -fx-font-weight: bold;");
+        labelIconoPing.setStyle("-fx-font-size: 18; -fx-font-weight: bold;");
         conexionExitosa.setStyle("-fx-font-weight: bold;");
         entornoAPI.setStyle("-fx-font-weight: bold;");
 
@@ -188,37 +190,6 @@ public class JavaFxApp extends Application {
 
             task.setOnFailed(event -> {
                 labelVersionACP.setText("Error al conectar");
-            });
-
-            new Thread(task).start();
-        });
-
-        btnPing.setOnAction(e -> {
-
-            conexionExitosa.setText("Comprobando conexión...");
-            entornoAPI.setText("");
-
-            Task<DTOPing> task = new Task<>() {
-                @Override
-                protected DTOPing call() {
-                    return servicioAPI.obtenerPing();
-                }
-            };
-
-            task.setOnSucceeded(event -> {
-                DTOPing resultado = task.getValue();
-                if (resultado.isOk()) {
-                    conexionExitosa.setText("Conexión exitosa");
-                    entornoAPI.setText("Entorno: " + resultado.getEntorno());
-                } else {
-                    conexionExitosa.setText("Conexión fallida");
-                    entornoAPI.setText("");
-                }
-            });
-
-            task.setOnFailed(event -> {
-                conexionExitosa.setText("Error al conectar");
-                entornoAPI.setText("");
             });
 
             new Thread(task).start();
@@ -426,6 +397,60 @@ public class JavaFxApp extends Application {
             new Thread(task).start();
         });
 
+        btnPing.setOnAction(e -> {
+
+            conexionExitosa.setText("Comprobando conexión...");
+            entornoAPI.setText("");
+            actualizarIconoEstado(labelIconoPing, null);
+
+            Task<DTOPing> task = new Task<>() {
+                @Override
+                protected DTOPing call() {
+                    return servicioAPI.obtenerPing();
+                }
+            };
+
+            task.setOnSucceeded(event -> {
+                Platform.runLater(() -> {
+                    try {
+                        DTOPing resultado = task.getValue();
+                        if (resultado != null && resultado.isOk()) {
+                            conexionExitosa.setText("Conexión exitosa");
+                            entornoAPI.setText("Entorno: " + resultado.getEntorno());
+                            actualizarIconoEstado(labelIconoPing, true);
+                        } else {
+                            conexionExitosa.setText("Conexión fallida");
+                            entornoAPI.setText("");
+                            actualizarIconoEstado(labelIconoPing, false);
+                            mostrarPopupErrorConexion("La API respondió pero no con el formato esperado.");
+                        }
+                    } catch (Exception ex) {
+                        conexionExitosa.setText("Error al conectar");
+                        entornoAPI.setText("");
+                        actualizarIconoEstado(labelIconoPing, false);
+                        mostrarPopupErrorConexion("Error: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
+                });
+            });
+
+            task.setOnFailed(event -> {
+                Platform.runLater(() -> {
+                    conexionExitosa.setText("Error al conectar");
+                    entornoAPI.setText("");
+                    actualizarIconoEstado(labelIconoPing, false);
+                    Throwable exception = task.getException();
+                    String mensaje = exception != null ? exception.getMessage() : "Error desconocido";
+                    mostrarPopupErrorConexion("No se pudo conectar con la API: " + mensaje);
+                    if (exception != null) {
+                        exception.printStackTrace();
+                    }
+                });
+            });
+
+            new Thread(task).start();
+        });
+
         botonAjustes.setOnAction(eventoAjustes -> {
             Stage dialogo = new Stage();
             dialogo.initOwner(stage);
@@ -519,6 +544,14 @@ public class JavaFxApp extends Application {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText("No se pudo completar la actualización");
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
+    private void mostrarPopupErrorConexion(String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText("Conexión fallida con la API.");
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
