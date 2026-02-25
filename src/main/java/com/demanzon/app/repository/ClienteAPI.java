@@ -7,6 +7,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.demanzon.app.DTO.DTOActualizacion;
+import com.demanzon.app.DTO.DTOPing;
 import com.demanzon.app.DTO.DTOVersion;
 
 @Component
@@ -16,7 +17,8 @@ public class ClienteAPI {
     private final String urlVersion = "https://dev.demanzon.com/version";
     private final String urlActualizacion = "https://dev.demanzon.com/updateSeason";
     private final String urlVersionPro = "https://dev.demanzon.com/api/v1/animecalendarpro/appversion";
-    private final String urlActualizacionPro = "https://dev.demanzon.com/api/v1/animecalendarpro/updateAppVersion";
+    private final String urlActualizacionPro= "https://dev.demanzon.com/api/v1/animecalendarpro/updateAppVersion";
+    private final String urlPing = "https://dev.demanzon.com/ping";
 
     public ClienteAPI(RestTemplate conexionAlAPI) {
         this.conexionAlAPI = conexionAlAPI;
@@ -75,5 +77,28 @@ public class ClienteAPI {
 
         dto.setActualizacionExitosa(false);
         return dto;
+    }
+
+    public DTOPing ping() {
+        String respuesta = conexionAlAPI.getForObject(urlPing, String.class);
+        return parse(respuesta);
+    }
+
+    private static DTOPing parse(String linea) {
+
+        DTOPing resultado = new DTOPing();
+
+        if (linea.startsWith("ok")) {
+            resultado.setOk(true);
+        }
+
+        int ultimoDosPuntos = linea.lastIndexOf(":");
+
+        if (ultimoDosPuntos != -1) {
+            String valor = linea.substring(ultimoDosPuntos + 1).trim();
+            resultado.setEntorno(valor);
+        }
+
+        return resultado;
     }
 }
