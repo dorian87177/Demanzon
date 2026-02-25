@@ -463,6 +463,14 @@ public class JavaFxApp extends Application {
         });
 
         stage.setTitle("Gestor de Versiones");
+        
+        try {
+            Image icono = new Image(getClass().getResourceAsStream("/images/anime_calendar_logo.png"));
+            stage.getIcons().add(icono);
+        } catch (Exception e) {
+            System.err.println("Error al cargar el icono: " + e.getMessage());
+        }
+        
         stage.setScene(scene);
         stage.show();
 
