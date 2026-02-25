@@ -1,11 +1,15 @@
+com\demanzon\app\DTO\DTOPing.class
 com\demanzon\app\javafx\JavaFxApp$2.class
 com\demanzon\app\repository\ClienteAPI.class
 com\demanzon\app\config\ConfiguracionAplicacion.class
 com\demanzon\app\AppApplication.class
+com\demanzon\app\javafx\JavaFxApp$7.class
 com\demanzon\app\javafx\JavaFxApp.class
 com\demanzon\app\javafx\JavaFxApp$1.class
 com\demanzon\app\service\ServicioAPI.class
 com\demanzon\app\DTO\DTOVersion.class
+com\demanzon\app\javafx\JavaFxApp$6.class
+com\demanzon\app\javafx\JavaFxApp$5.class
 com\demanzon\app\controller\TestControlador.class
 com\demanzon\app\DTO\DTOPeticionActualizacion.class
 com\demanzon\app\DTO\DTOActualizacion.class
