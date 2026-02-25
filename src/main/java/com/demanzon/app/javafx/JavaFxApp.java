@@ -1,5 +1,7 @@
 package com.demanzon.app.javafx;
 
+import java.util.regex.Pattern;
+
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -149,9 +151,15 @@ public class JavaFxApp extends Application {
         btnActualizarVersionAC.setOnAction(e -> {
 
             String nuevaVersion = txtActualizarVersionAC.getText();
+            Pattern versionRegex = Pattern.compile("^V\\.\\d+\\.\\d+\\.\\d+$");
 
             if (nuevaVersion.isBlank()) {
                 labelVersionAC.setText("Introduce una versión");
+                return;
+            }
+
+            if (!versionRegex.matcher(nuevaVersion).matches()) {
+                labelVersionAC.setText("Formato de versión inválido");
                 return;
             }
 
@@ -181,9 +189,15 @@ public class JavaFxApp extends Application {
         btnActualizarVersionACP.setOnAction(e -> {
 
             String nuevaVersion = txtActualizarVersionACP.getText();
+            Pattern versionRegex = Pattern.compile("^V\\.\\d+\\.\\d+\\.\\d+$");
 
             if (nuevaVersion.isBlank()) {
                 labelVersionACP.setText("Introduce una versión");
+                return;
+            }
+
+            if (!versionRegex.matcher(nuevaVersion).matches()) {
+                labelVersionACP.setText("Formato de versión inválido");
                 return;
             }
 
