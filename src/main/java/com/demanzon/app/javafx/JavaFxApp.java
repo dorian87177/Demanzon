@@ -8,6 +8,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import com.demanzon.app.AppApplication;
 import com.demanzon.app.DTO.DTOActualizacion;
 import com.demanzon.app.DTO.DTOVersion;
+import com.demanzon.app.DTO.DTOPing;
 import com.demanzon.app.service.ServicioAPI;
 
 import javafx.application.Application;
@@ -19,6 +20,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.BorderPane;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -49,12 +51,15 @@ public class JavaFxApp extends Application {
         Label labelVersionACP = new Label();
         Label labelMensajeActualizacionAC = new Label();
         Label labelMensajeActualizacionACP = new Label();
+        Label conexionExitosa = new Label();
+        Label entornoAPI = new Label();
         Button btnObtenerVersionAC = new Button("Mostrar Versión Calendario de Anime");
         Button btnObtenerVersionACP = new Button("Mostrar Versión Calendario de Anime pro");
         Button btnActualizarVersionAC = new Button("Actualizar Versión Calendario de Anime");
         Button btnActualizarVersionACP = new Button("Actualizar Versión Calendario de Anime pro");
         Button btnIncrementarVersionAC = new Button("Incrementar +1 versión Anime Calendar");
         Button btnIncrementarVersionACP = new Button("Incrementar +1 versión Anime Calendar pro");
+        Button btnPing = new Button("Comprobar conexión con la API");
         TextField txtActualizarVersionAC = new TextField();
         TextField txtActualizarVersionACP = new TextField();
 
@@ -67,9 +72,17 @@ public class JavaFxApp extends Application {
         HBox filaIncrementarV1 = new HBox(10, btnIncrementarVersionAC);
         HBox filaIncrementarV2 = new HBox(10, btnIncrementarVersionACP);
 
+        VBox labelsPing = new VBox(5, conexionExitosa, entornoAPI);
+        labelsPing.setAlignment(Pos.CENTER_RIGHT);
+        labelsPing.setMaxWidth(Double.MAX_VALUE);
+
+        HBox filaPing = new HBox(10, btnPing, labelsPing);
+        HBox.setHgrow(labelsPing, Priority.ALWAYS);
+
         VBox seccionAC = new VBox(10, filaV1, filaActualizarV1, filaIncrementarV1);
         VBox seccionACP = new VBox(10, filaV2, filaActualizarV2, filaIncrementarV2);
-        VBox contenedor = new VBox(15, seccionAC, seccionACP);
+        VBox seccionPing = new VBox(10, filaPing);
+        VBox contenedor = new VBox(15, seccionAC, seccionACP, seccionPing);
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root, 675, 500);
 
@@ -87,6 +100,8 @@ public class JavaFxApp extends Application {
         labelVersionACP.setStyle("-fx-font-weight: bold;");
         labelMensajeActualizacionAC.setStyle("-fx-font-weight: bold;");
         labelMensajeActualizacionACP.setStyle("-fx-font-weight: bold;");
+        conexionExitosa.setStyle("-fx-font-weight: bold;");
+        entornoAPI.setStyle("-fx-font-weight: bold;");
 
         btnObtenerVersionAC.setStyle("-fx-base: #D8BFD8; -fx-font-size: 11;");
         btnObtenerVersionACP.setStyle("-fx-base: #ADD8E6; -fx-font-size: 11;");
@@ -94,6 +109,7 @@ public class JavaFxApp extends Application {
         btnActualizarVersionACP.setStyle("-fx-base: #ADD8E6; -fx-font-size: 11;");
         btnIncrementarVersionAC.setStyle("-fx-base: #D8BFD8; -fx-font-size: 11;");
         btnIncrementarVersionACP.setStyle("-fx-base: #ADD8E6; -fx-font-size: 11;");
+        btnPing.setStyle("-fx-base: #c9fac9d3; -fx-font-size: 11;");
 
         txtActualizarVersionAC.setPromptText("Nueva versión normal");
         txtActualizarVersionACP.setPromptText("Nueva versión pro");
@@ -104,12 +120,16 @@ public class JavaFxApp extends Application {
         filaActualizarV2.setAlignment(Pos.CENTER_LEFT);
         filaIncrementarV1.setAlignment(Pos.CENTER_LEFT);
         filaIncrementarV2.setAlignment(Pos.CENTER_LEFT);
+        filaPing.setAlignment(Pos.CENTER_LEFT);
 
         seccionAC.setPadding(new Insets(12));
         seccionAC.setStyle("-fx-background-color: #F5E6F5;");
 
         seccionACP.setPadding(new Insets(12));
         seccionACP.setStyle("-fx-background-color: #E5F0FF;");
+
+        seccionPing.setPadding(new Insets(12));
+        seccionPing.setStyle("-fx-background-color: #f0ffd8ea;");
 
         contenedor.setPadding(new Insets(15));
         contenedor.setStyle("-fx-background-color: #FFF0F7;");
@@ -157,6 +177,37 @@ public class JavaFxApp extends Application {
 
             task.setOnFailed(event -> {
                 labelVersionACP.setText("Error al conectar");
+            });
+
+            new Thread(task).start();
+        });
+
+        btnPing.setOnAction(e -> {
+
+            conexionExitosa.setText("Comprobando conexión...");
+            entornoAPI.setText("");
+
+            Task<DTOPing> task = new Task<>() {
+                @Override
+                protected DTOPing call() {
+                    return servicioAPI.obtenerPing();
+                }
+            };
+
+            task.setOnSucceeded(event -> {
+                DTOPing resultado = task.getValue();
+                if (resultado.isOk()) {
+                    conexionExitosa.setText("Conexión exitosa");
+                    entornoAPI.setText("Entorno: " + resultado.getEntorno());
+                } else {
+                    conexionExitosa.setText("Conexión fallida");
+                    entornoAPI.setText("");
+                }
+            });
+
+            task.setOnFailed(event -> {
+                conexionExitosa.setText("Error al conectar");
+                entornoAPI.setText("");
             });
 
             new Thread(task).start();
@@ -329,6 +380,8 @@ public class JavaFxApp extends Application {
         stage.setTitle("Gestor de Versiones");
         stage.setScene(scene);
         stage.show();
+
+        btnPing.fire();
     }
 
     @Override
