@@ -27,6 +27,8 @@ import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import javafx.scene.layout.Region;
+import javafx.stage.Modality;
 
 public class JavaFxApp extends Application {
 
@@ -45,7 +47,11 @@ public class JavaFxApp extends Application {
         Image imagenKawai = new Image(getClass().getResourceAsStream("/images/anime_calendar_logo.png"));
         ImageView imagenView = new ImageView(imagenKawai);
         Label tituloJapones = new Label("アニメカレンダー");
+        Button botonAjustes = new Button("Ajustes");
+        Region separador = new Region();
+        HBox.setHgrow(separador, Priority.ALWAYS);
         HBox encabezado = new HBox(15, imagenView, tituloJapones);
+        encabezado.getChildren().addAll(separador, botonAjustes);
 
         Label labelVersionAC = new Label();
         Label labelVersionACP = new Label();
@@ -375,6 +381,42 @@ public class JavaFxApp extends Application {
             });
 
             new Thread(task).start();
+        });
+
+        botonAjustes.setOnAction(eventoAjustes -> {
+            Stage dialogo = new Stage();
+            dialogo.initOwner(stage);
+            dialogo.initModality(Modality.APPLICATION_MODAL);
+            dialogo.setTitle("Ajustes");
+
+            Label etiqueta = new Label("URL de la API:");
+            TextField campoUrl = new TextField();
+            String actual = servicioAPI.obtenerUrlBase();
+            if (actual != null) campoUrl.setText(actual);
+
+            Button botonGuardar = new Button("Guardar");
+            Button botonCancelar = new Button("Cancelar");
+
+            HBox cajaBotones = new HBox(10, botonGuardar, botonCancelar);
+            cajaBotones.setAlignment(Pos.CENTER_RIGHT);
+
+            VBox caja = new VBox(10, etiqueta, campoUrl, cajaBotones);
+            caja.setPadding(new Insets(12));
+
+            botonGuardar.setOnAction(eventoGuardar -> {
+                String nueva = campoUrl.getText();
+                if (nueva != null && !nueva.isBlank()) {
+                    servicioAPI.establecerUrlBase(nueva.trim());
+                    servicioAPI.guardarUrlBase(nueva.trim());
+                }
+                dialogo.close();
+            });
+
+            botonCancelar.setOnAction(eventoCancelar -> dialogo.close());
+
+            Scene escenaDialogo = new Scene(caja, 480, 140);
+            dialogo.setScene(escenaDialogo);
+            dialogo.showAndWait();
         });
 
         stage.setTitle("Gestor de Versiones");

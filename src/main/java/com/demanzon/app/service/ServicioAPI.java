@@ -35,4 +35,16 @@ public class ServicioAPI {
     public DTOPing obtenerPing() {
         return clienteAPI.ping();
     }
+
+    public void establecerUrlBase(String url) {
+        clienteAPI.establecerUrlBase(url);
+    }
+
+    public void guardarUrlBase(String url) {
+        clienteAPI.guardarUrlBase(url);
+    }
+
+    public String obtenerUrlBase() {
+        return clienteAPI.obtenerUrlBase();
+    }
 }
