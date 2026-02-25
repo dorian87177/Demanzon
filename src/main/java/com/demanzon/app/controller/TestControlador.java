@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.demanzon.app.DTO.DTOActualizacion;
+import com.demanzon.app.DTO.DTOPing;
 import com.demanzon.app.DTO.DTOVersion;
 import com.demanzon.app.service.ServicioAPI;
 
@@ -27,13 +28,18 @@ public class TestControlador {
         return servicioAPI.obtenerActualizacion(version);
     }
 
+    @GetMapping("/ping")
+    public DTOPing ping() {
+        return servicioAPI.obtenerPing();
+    }
+
     @GetMapping("/api/v1/animecalendarpro/appversion")
-    public DTOVersion versionPremium() {
-        return servicioAPI.obtenerVersionPremium();
+    public DTOVersion versionPro() {
+        return servicioAPI.obtenerVersionPro();
     }
 
     @GetMapping("/api/v1/animecalendarpro/updateAppVersion")
-    public DTOActualizacion actualizacionPremium(@RequestParam String version) {
-        return servicioAPI.obtenerActualizacionPremium(version);
+    public DTOActualizacion actualizacionPro(@RequestParam String version) {
+        return servicioAPI.obtenerActualizacionPro(version);
     }
 }
