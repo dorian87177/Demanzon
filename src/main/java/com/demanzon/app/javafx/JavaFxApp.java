@@ -36,6 +36,8 @@ public class JavaFxApp extends Application {
     public void init() {
         context = new SpringApplicationBuilder(AppApplication.class).run();
         servicioAPI = context.getBean(ServicioAPI.class);
+
+
     }
 
     @Override
@@ -62,14 +64,15 @@ public class JavaFxApp extends Application {
         HBox filaV2 = new HBox(10, btnObtenerVersionACP, labelVersionACP);
         HBox filaActualizarV1 = new HBox(10, btnActualizarVersionAC, txtActualizarVersionAC);
         HBox filaActualizarV2 = new HBox(10, btnActualizarVersionACP, txtActualizarVersionACP);
-        HBox filaPing = new HBox(10, btnPing);
+        VBox labelsPing = new VBox(5, conexionExitosa, entornoAPI);
+        HBox filaPing = new HBox(10, btnPing, labelsPing);
 
         VBox seccionAC = new VBox(10, filaV1, filaActualizarV1);
         VBox seccionACP = new VBox(10, filaV2, filaActualizarV2);
-        VBox seccionPing = new VBox(10, filaPing, conexionExitosa, entornoAPI);
+        VBox seccionPing = new VBox(10, filaPing);
         VBox contenedor = new VBox(15, seccionAC, seccionACP, seccionPing);
         BorderPane root = new BorderPane();
-        Scene scene = new Scene(root, 475, 375);
+        Scene scene = new Scene(root, 475, 450);
 
         imagenView.setFitHeight(120);
         imagenView.setFitWidth(120);
@@ -99,6 +102,7 @@ public class JavaFxApp extends Application {
         filaV2.setAlignment(Pos.CENTER_LEFT);
         filaActualizarV1.setAlignment(Pos.CENTER_LEFT);
         filaActualizarV2.setAlignment(Pos.CENTER_LEFT);
+        filaPing.setAlignment(Pos.CENTER_LEFT);
 
         seccionAC.setPadding(new Insets(12));
         seccionAC.setStyle("-fx-background-color: #F5E6F5;");
@@ -236,40 +240,43 @@ public class JavaFxApp extends Application {
             new Thread(task).start();
         });
 
-        btnPing.setOnAction(e -> {
-
-            conexionExitosa.setText("Comprobando conexión...");
-            entornoAPI.setText("");
-
-            Task<DTOPing> task = new Task<>() {
-                @Override
-                protected DTOPing call() {
-                    return servicioAPI.obtenerPing();
-                }
-            };
-
-            task.setOnSucceeded(event -> {
-                DTOPing resultado = task.getValue();
-                if (resultado.isOk()) {
-                    conexionExitosa.setText("Conexión exitosa");
-                    entornoAPI.setText("Entorno: " + resultado.getEntorno());
-                } else {
-                    conexionExitosa.setText("Conexión fallida");
-                    entornoAPI.setText("");
-                }
-            });
-
-            task.setOnFailed(event -> {
-                conexionExitosa.setText("Error al conectar");
-                entornoAPI.setText("");
-            });
-
-            new Thread(task).start();
-        });
+        btnPing.setOnAction(e -> realizarPing(conexionExitosa, entornoAPI));
 
         stage.setTitle("Gestor de Versiones");
         stage.setScene(scene);
         stage.show();
+
+        realizarPing(conexionExitosa, entornoAPI);
+    }
+
+    private void realizarPing(Label conexionExitosa, Label entornoAPI) {
+        conexionExitosa.setText("Comprobando conexión...");
+        entornoAPI.setText("");
+
+        Task<DTOPing> task = new Task<>() {
+            @Override
+            protected DTOPing call() {
+                return servicioAPI.obtenerPing();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            DTOPing resultado = task.getValue();
+            if (resultado.isOk()) {
+                conexionExitosa.setText("Conexión exitosa");
+                entornoAPI.setText("Entorno: " + resultado.getEntorno());
+            } else {
+                conexionExitosa.setText("Conexión fallida");
+                entornoAPI.setText("");
+            }
+        });
+
+        task.setOnFailed(event -> {
+            conexionExitosa.setText("Error al conectar");
+            entornoAPI.setText("");
+        });
+
+        new Thread(task).start();
     }
 
     @Override
