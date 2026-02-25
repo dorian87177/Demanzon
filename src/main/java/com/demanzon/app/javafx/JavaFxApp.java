@@ -40,7 +40,7 @@ public class JavaFxApp extends Application {
     @Override
     public void start(Stage stage) {
 
-        Image imagenKawai = new Image(getClass().getResourceAsStream("/images/chicaKawai.jpg"));
+        Image imagenKawai = new Image(getClass().getResourceAsStream("/images/anime_calendar_logo.png"));
         ImageView imagenView = new ImageView(imagenKawai);
         Label tituloJapones = new Label("アニメカレンダー");
         HBox encabezado = new HBox(15, imagenView, tituloJapones);
@@ -48,9 +48,9 @@ public class JavaFxApp extends Application {
         Label labelVersionAC = new Label();
         Label labelVersionACP = new Label();
         Button btnObtenerVersionAC = new Button("Mostrar Versión Calendario de Anime");
-        Button btnObtenerVersionACP = new Button("Mostrar Versión Calendario de Anime premium");
+        Button btnObtenerVersionACP = new Button("Mostrar Versión Calendario de Anime pro");
         Button btnActualizarVersionAC = new Button("Actualizar Versión Calendario de Anime");
-        Button btnActualizarVersionACP = new Button("Actualizar Versión Calendario de Anime premium");
+        Button btnActualizarVersionACP = new Button("Actualizar Versión Calendario de Anime pro");
         TextField txtActualizarVersionAC = new TextField();
         TextField txtActualizarVersionACP = new TextField();
 
@@ -63,7 +63,7 @@ public class JavaFxApp extends Application {
         VBox seccionACP = new VBox(10, filaV2, filaActualizarV2);
         VBox contenedor = new VBox(15, seccionAC, seccionACP);
         BorderPane root = new BorderPane();
-        Scene scene = new Scene(root, 475, 375);
+        Scene scene = new Scene(root, 475, 500);
 
         imagenView.setFitHeight(120);
         imagenView.setFitWidth(120);
@@ -84,7 +84,7 @@ public class JavaFxApp extends Application {
         btnActualizarVersionACP.setStyle("-fx-base: #ADD8E6; -fx-font-size: 11;");
 
         txtActualizarVersionAC.setPromptText("Nueva versión normal");
-        txtActualizarVersionACP.setPromptText("Nueva versión premium");
+        txtActualizarVersionACP.setPromptText("Nueva versión pro");
 
         filaV1.setAlignment(Pos.CENTER_LEFT);
         filaV2.setAlignment(Pos.CENTER_LEFT);
@@ -133,7 +133,7 @@ public class JavaFxApp extends Application {
             Task<DTOVersion> task = new Task<>() {
                 @Override
                 protected DTOVersion call() {
-                    return servicioAPI.obtenerVersionPremium();
+                    return servicioAPI.obtenerVersionPro();
                 }
             };
 
@@ -206,7 +206,7 @@ public class JavaFxApp extends Application {
             Task<DTOActualizacion> task = new Task<>() {
                 @Override
                 protected DTOActualizacion call() {
-                    return servicioAPI.obtenerActualizacionPremium(nuevaVersion);
+                    return servicioAPI.obtenerActualizacionPro(nuevaVersion);
                 }
             };
 
