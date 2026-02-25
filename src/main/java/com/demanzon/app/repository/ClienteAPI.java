@@ -1,6 +1,11 @@
 package com.demanzon.app.repository;
 
 import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.IOException;
+import java.util.Properties;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -14,14 +19,72 @@ import com.demanzon.app.DTO.DTOVersion;
 public class ClienteAPI {
 
     private final RestTemplate conexionAlAPI;
-    private final String urlVersion = "https://dev.demanzon.com/version";
-    private final String urlActualizacion = "https://dev.demanzon.com/updateSeason";
-    private final String urlVersionPro = "https://dev.demanzon.com/api/v1/animecalendarpro/appversion";
-    private final String urlActualizacionPro= "https://dev.demanzon.com/api/v1/animecalendarpro/updateAppVersion";
-    private final String urlPing = "https://dev.demanzon.com/ping";
+    private String urlBase = "https://dev.demanzon.com";
+    private String urlVersion;
+    private String urlActualizacion;
+    private String urlVersionPro;
+    private String urlActualizacionPro;
+    private String urlPing;
 
     public ClienteAPI(RestTemplate conexionAlAPI) {
         this.conexionAlAPI = conexionAlAPI;
+        String guardada = cargarUrlGuardada();
+        if (guardada != null && !guardada.isBlank()) {
+            this.urlBase = guardada;
+        }
+        reconstruirUrls();
+    }
+
+    private void reconstruirUrls() {
+        this.urlVersion = urlBase + "/version";
+        this.urlActualizacion = urlBase + "/updateSeason";
+        this.urlVersionPro = urlBase + "/api/v1/animecalendarpro/appversion";
+        this.urlActualizacionPro = urlBase + "/api/v1/animecalendarpro/updateAppVersion";
+        this.urlPing = urlBase + "/ping";
+    }
+
+    public void establecerUrlBase(String nuevaUrl) {
+        if (nuevaUrl == null || nuevaUrl.isBlank()) return;
+        this.urlBase = nuevaUrl.trim();
+        reconstruirUrls();
+    }
+
+    public String obtenerUrlBase() {
+        return this.urlBase;
+    }
+
+    public void guardarUrlBase(String nuevaUrl) {
+        try {
+            Path rutaConfiguracion = obtenerRutaConfiguracion();
+            Files.createDirectories(rutaConfiguracion.getParent());
+            Properties propiedades = new Properties();
+            propiedades.setProperty("api.url", nuevaUrl);
+            try (var flujoSalida = Files.newOutputStream(rutaConfiguracion)) {
+                propiedades.store(flujoSalida, "");
+            }
+        } catch (IOException e) {
+        }
+    }
+
+    private String cargarUrlGuardada() {
+        try {
+            Path rutaConfiguracion = obtenerRutaConfiguracion();
+            if (Files.exists(rutaConfiguracion)) {
+                Properties propiedades = new Properties();
+                try (var flujoEntrada = Files.newInputStream(rutaConfiguracion)) {
+                    propiedades.load(flujoEntrada);
+                }
+                return propiedades.getProperty("api.url");
+            }
+        } catch (IOException e) {
+        }
+        return null;
+    }
+
+    private Path obtenerRutaConfiguracion() {
+        String home = System.getProperty("user.home");
+        Path dir = Paths.get(home, ".demanzon");
+        return dir.resolve("config.properties");
     }
 
     public DTOVersion obtenerVersion() {
