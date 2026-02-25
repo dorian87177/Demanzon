@@ -3,6 +3,7 @@ package com.demanzon.app.service;
 import org.springframework.stereotype.Service;
 
 import com.demanzon.app.DTO.DTOActualizacion;
+import com.demanzon.app.DTO.DTOPing;
 import com.demanzon.app.DTO.DTOVersion;
 import com.demanzon.app.repository.ClienteAPI;
 
@@ -29,5 +30,9 @@ public class ServicioAPI {
 
     public DTOActualizacion obtenerActualizacionPremium(String version) {
         return clienteAPI.actualizarVersionPremium(version);
+    }
+
+    public DTOPing obtenerPing() {
+        return clienteAPI.ping();
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import com.demanzon.app.AppApplication;
 import com.demanzon.app.DTO.DTOActualizacion;
+import com.demanzon.app.DTO.DTOPing;
 import com.demanzon.app.DTO.DTOVersion;
 import com.demanzon.app.service.ServicioAPI;
 
@@ -47,10 +48,13 @@ public class JavaFxApp extends Application {
 
         Label labelVersionAC = new Label();
         Label labelVersionACP = new Label();
+        Label conexionExitosa = new Label();
+        Label entornoAPI = new Label();
         Button btnObtenerVersionAC = new Button("Mostrar Versión Calendario de Anime");
         Button btnObtenerVersionACP = new Button("Mostrar Versión Calendario de Anime premium");
         Button btnActualizarVersionAC = new Button("Actualizar Versión Calendario de Anime");
         Button btnActualizarVersionACP = new Button("Actualizar Versión Calendario de Anime premium");
+        Button btnPing = new Button("Comprobar conexión con la API");
         TextField txtActualizarVersionAC = new TextField();
         TextField txtActualizarVersionACP = new TextField();
 
@@ -58,10 +62,12 @@ public class JavaFxApp extends Application {
         HBox filaV2 = new HBox(10, btnObtenerVersionACP, labelVersionACP);
         HBox filaActualizarV1 = new HBox(10, btnActualizarVersionAC, txtActualizarVersionAC);
         HBox filaActualizarV2 = new HBox(10, btnActualizarVersionACP, txtActualizarVersionACP);
+        HBox filaPing = new HBox(10, btnPing);
 
         VBox seccionAC = new VBox(10, filaV1, filaActualizarV1);
         VBox seccionACP = new VBox(10, filaV2, filaActualizarV2);
-        VBox contenedor = new VBox(15, seccionAC, seccionACP);
+        VBox seccionPing = new VBox(10, filaPing, conexionExitosa, entornoAPI);
+        VBox contenedor = new VBox(15, seccionAC, seccionACP, seccionPing);
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root, 475, 375);
 
@@ -77,11 +83,14 @@ public class JavaFxApp extends Application {
 
         labelVersionAC.setStyle("-fx-font-weight: bold;");
         labelVersionACP.setStyle("-fx-font-weight: bold;");
+        conexionExitosa.setStyle("-fx-font-weight: bold;");
+        entornoAPI.setStyle("-fx-font-weight: bold;");
 
         btnObtenerVersionAC.setStyle("-fx-base: #D8BFD8; -fx-font-size: 11;");
         btnObtenerVersionACP.setStyle("-fx-base: #ADD8E6; -fx-font-size: 11;");
         btnActualizarVersionAC.setStyle("-fx-base: #D8BFD8; -fx-font-size: 11;");
         btnActualizarVersionACP.setStyle("-fx-base: #ADD8E6; -fx-font-size: 11;");
+        btnPing.setStyle("-fx-base: #c9fac9d3; -fx-font-size: 11;");
 
         txtActualizarVersionAC.setPromptText("Nueva versión normal");
         txtActualizarVersionACP.setPromptText("Nueva versión premium");
@@ -96,6 +105,9 @@ public class JavaFxApp extends Application {
 
         seccionACP.setPadding(new Insets(12));
         seccionACP.setStyle("-fx-background-color: #E5F0FF;");
+
+        seccionPing.setPadding(new Insets(12));
+        seccionPing.setStyle("-fx-background-color: #f0ffd8ea;");
 
         contenedor.setPadding(new Insets(15));
         contenedor.setStyle("-fx-background-color: #FFF0F7;");
@@ -219,6 +231,37 @@ public class JavaFxApp extends Application {
                 } else {
                     labelVersionACP.setText("La actualización falló");
                 }
+            });
+
+            new Thread(task).start();
+        });
+
+        btnPing.setOnAction(e -> {
+
+            conexionExitosa.setText("Comprobando conexión...");
+            entornoAPI.setText("");
+
+            Task<DTOPing> task = new Task<>() {
+                @Override
+                protected DTOPing call() {
+                    return servicioAPI.obtenerPing();
+                }
+            };
+
+            task.setOnSucceeded(event -> {
+                DTOPing resultado = task.getValue();
+                if (resultado.isOk()) {
+                    conexionExitosa.setText("Conexión exitosa");
+                    entornoAPI.setText("Entorno: " + resultado.getEntorno());
+                } else {
+                    conexionExitosa.setText("Conexión fallida");
+                    entornoAPI.setText("");
+                }
+            });
+
+            task.setOnFailed(event -> {
+                conexionExitosa.setText("Error al conectar");
+                entornoAPI.setText("");
             });
 
             new Thread(task).start();
