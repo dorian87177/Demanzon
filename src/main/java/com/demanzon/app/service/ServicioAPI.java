@@ -24,12 +24,12 @@ public class ServicioAPI {
         return clienteAPI.actualizarVersion(version);
     }
 
-    public DTOVersion obtenerVersionPremium() {
-        return clienteAPI.obtenerVersionPremium();
+    public DTOVersion obtenerVersionPro() {
+        return clienteAPI.obtenerVersionPro();
     }
 
-    public DTOActualizacion obtenerActualizacionPremium(String version) {
-        return clienteAPI.actualizarVersionPremium(version);
+    public DTOActualizacion obtenerActualizacionPro(String version) {
+        return clienteAPI.actualizarVersionPro(version);
     }
 
     public DTOPing obtenerPing() {
