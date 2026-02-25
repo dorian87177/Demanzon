@@ -15,6 +15,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -57,6 +58,8 @@ public class JavaFxApp extends Application {
         Label labelVersionACP = new Label();
         Label labelMensajeActualizacionAC = new Label();
         Label labelMensajeActualizacionACP = new Label();
+        Label labelIconoActualizacionAC = new Label();
+        Label labelIconoActualizacionACP = new Label();
         Label conexionExitosa = new Label();
         Label entornoAPI = new Label();
         Button btnObtenerVersionAC = new Button("Mostrar Versión Calendario de Anime");
@@ -72,9 +75,9 @@ public class JavaFxApp extends Application {
         HBox filaV1 = new HBox(10, btnObtenerVersionAC, labelVersionAC);
         HBox filaV2 = new HBox(10, btnObtenerVersionACP, labelVersionACP);
         HBox filaActualizarV1 = new HBox(10, btnActualizarVersionAC, txtActualizarVersionAC,
-                labelMensajeActualizacionAC);
+                labelMensajeActualizacionAC, labelIconoActualizacionAC);
         HBox filaActualizarV2 = new HBox(10, btnActualizarVersionACP, txtActualizarVersionACP,
-                labelMensajeActualizacionACP);
+                labelMensajeActualizacionACP, labelIconoActualizacionACP);
         HBox filaIncrementarV1 = new HBox(10, btnIncrementarVersionAC);
         HBox filaIncrementarV2 = new HBox(10, btnIncrementarVersionACP);
 
@@ -106,6 +109,8 @@ public class JavaFxApp extends Application {
         labelVersionACP.setStyle("-fx-font-weight: bold;");
         labelMensajeActualizacionAC.setStyle("-fx-font-weight: bold;");
         labelMensajeActualizacionACP.setStyle("-fx-font-weight: bold;");
+        labelIconoActualizacionAC.setStyle("-fx-font-size: 18; -fx-font-weight: bold;");
+        labelIconoActualizacionACP.setStyle("-fx-font-size: 18; -fx-font-weight: bold;");
         conexionExitosa.setStyle("-fx-font-weight: bold;");
         entornoAPI.setStyle("-fx-font-weight: bold;");
 
@@ -226,15 +231,20 @@ public class JavaFxApp extends Application {
 
             if (nuevaVersion.isBlank()) {
                 labelMensajeActualizacionAC.setText("Introduce una versión");
+                actualizarIconoEstado(labelIconoActualizacionAC, false);
+                mostrarPopupError("Debes introducir una versión para actualizar Anime Calendar");
                 return;
             }
 
             if (!versionRegex.matcher(nuevaVersion).matches()) {
                 labelMensajeActualizacionAC.setText("Formato de versión inválido");
+                actualizarIconoEstado(labelIconoActualizacionAC, false);
+                mostrarPopupError("El formato debe ser V.x.y.z (por ejemplo V.1.2.3). ");
                 return;
             }
 
             labelMensajeActualizacionAC.setText("Cargando...");
+            actualizarIconoEstado(labelIconoActualizacionAC, null);
 
             Task<DTOActualizacion> task = new Task<>() {
                 @Override
@@ -249,13 +259,18 @@ public class JavaFxApp extends Application {
 
                 if (resultado.isActualizacionExitosa()) {
                     labelMensajeActualizacionAC.setText("Actualización realizada correctamente");
+                    actualizarIconoEstado(labelIconoActualizacionAC, true);
                 } else {
                     labelMensajeActualizacionAC.setText("La actualización falló");
+                    actualizarIconoEstado(labelIconoActualizacionAC, false);
+                    mostrarPopupError("La actualización de Anime Calendar no se pudo completar");
                 }
             });
 
             task.setOnFailed(event -> {
                 labelMensajeActualizacionAC.setText("La actualización falló");
+                actualizarIconoEstado(labelIconoActualizacionAC, false);
+                mostrarPopupError("Ocurrió un error al actualizar Anime Calendar");
             });
 
             new Thread(task).start();
@@ -268,15 +283,20 @@ public class JavaFxApp extends Application {
 
             if (nuevaVersion.isBlank()) {
                 labelMensajeActualizacionACP.setText("Introduce una versión");
+                actualizarIconoEstado(labelIconoActualizacionACP, false);
+                mostrarPopupError("Debes introducir una versión para actualizar Anime Calendar pro");
                 return;
             }
 
             if (!versionRegex.matcher(nuevaVersion).matches()) {
                 labelMensajeActualizacionACP.setText("Formato de versión inválido");
+                actualizarIconoEstado(labelIconoActualizacionACP, false);
+                mostrarPopupError("El formato debe ser V.x.y.z (por ejemplo V.1.2.3). ");
                 return;
             }
 
             labelMensajeActualizacionACP.setText("Cargando...");
+            actualizarIconoEstado(labelIconoActualizacionACP, null);
 
             Task<DTOActualizacion> task = new Task<>() {
                 @Override
@@ -291,13 +311,18 @@ public class JavaFxApp extends Application {
 
                 if (resultado.isActualizacionExitosa()) {
                     labelMensajeActualizacionACP.setText("Actualización realizada correctamente");
+                    actualizarIconoEstado(labelIconoActualizacionACP, true);
                 } else {
                     labelMensajeActualizacionACP.setText("La actualización falló");
+                    actualizarIconoEstado(labelIconoActualizacionACP, false);
+                    mostrarPopupError("La actualización de Anime Calendar pro no se pudo completar");
                 }
             });
 
             task.setOnFailed(event -> {
                 labelMensajeActualizacionACP.setText("La actualización falló");
+                actualizarIconoEstado(labelIconoActualizacionACP, false);
+                mostrarPopupError("Ocurrió un error al actualizar Anime Calendar pro");
             });
 
             new Thread(task).start();
@@ -305,6 +330,7 @@ public class JavaFxApp extends Application {
 
         btnIncrementarVersionAC.setOnAction(e -> {
             labelMensajeActualizacionAC.setText("Cargando...");
+            actualizarIconoEstado(labelIconoActualizacionAC, null);
 
             Task<DTOActualizacion> task = new Task<>() {
                 @Override
@@ -325,8 +351,11 @@ public class JavaFxApp extends Application {
 
                 if (resultado.isActualizacionExitosa()) {
                     labelMensajeActualizacionAC.setText("Actualización realizada correctamente");
+                    actualizarIconoEstado(labelIconoActualizacionAC, true);
                 } else {
                     labelMensajeActualizacionAC.setText("La actualización falló");
+                    actualizarIconoEstado(labelIconoActualizacionAC, false);
+                    mostrarPopupError("La actualización incremental de Anime Calendar no se pudo completar");
                 }
             });
 
@@ -335,8 +364,12 @@ public class JavaFxApp extends Application {
 
                 if (error instanceof IllegalArgumentException) {
                     labelMensajeActualizacionAC.setText("Formato de versión inválido");
+                    actualizarIconoEstado(labelIconoActualizacionAC, false);
+                    mostrarPopupError("El formato de la versión actual no es válido para incrementar Anime Calendar");
                 } else {
                     labelMensajeActualizacionAC.setText("La actualización falló");
+                    actualizarIconoEstado(labelIconoActualizacionAC, false);
+                    mostrarPopupError("Ocurrió un error al realizar la actualización incremental de Anime Calendar");
                 }
             });
 
@@ -345,6 +378,7 @@ public class JavaFxApp extends Application {
 
         btnIncrementarVersionACP.setOnAction(e -> {
             labelMensajeActualizacionACP.setText("Cargando...");
+            actualizarIconoEstado(labelIconoActualizacionACP, null);
 
             Task<DTOActualizacion> task = new Task<>() {
                 @Override
@@ -365,8 +399,11 @@ public class JavaFxApp extends Application {
 
                 if (resultado.isActualizacionExitosa()) {
                     labelMensajeActualizacionACP.setText("Actualización realizada correctamente");
+                    actualizarIconoEstado(labelIconoActualizacionACP, true);
                 } else {
                     labelMensajeActualizacionACP.setText("La actualización falló");
+                    actualizarIconoEstado(labelIconoActualizacionACP, false);
+                    mostrarPopupError("La actualización incremental de Anime Calendar pro no se pudo completar");
                 }
             });
 
@@ -375,8 +412,14 @@ public class JavaFxApp extends Application {
 
                 if (error instanceof IllegalArgumentException) {
                     labelMensajeActualizacionACP.setText("Formato de versión inválido");
+                    actualizarIconoEstado(labelIconoActualizacionACP, false);
+                    mostrarPopupError(
+                            "El formato de la versión actual no es válido para incrementar Anime Calendar pro");
                 } else {
                     labelMensajeActualizacionACP.setText("La actualización falló");
+                    actualizarIconoEstado(labelIconoActualizacionACP, false);
+                    mostrarPopupError(
+                            "Ocurrió un error al realizar la actualización incremental de Anime Calendar pro");
                 }
             });
 
@@ -447,5 +490,28 @@ public class JavaFxApp extends Application {
         int patch = Integer.parseInt(partes[2]) + 1;
 
         return "V." + partes[0] + "." + partes[1] + "." + patch;
+    }
+
+    private void actualizarIconoEstado(Label labelIcono, Boolean exito) {
+        if (exito == null) {
+            labelIcono.setText("");
+            return;
+        }
+
+        if (exito) {
+            labelIcono.setText("✓");
+            labelIcono.setStyle("-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: green;");
+        } else {
+            labelIcono.setText("✗");
+            labelIcono.setStyle("-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: red;");
+        }
+    }
+
+    private void mostrarPopupError(String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText("No se pudo completar la actualización");
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 }
