@@ -47,6 +47,8 @@ public class JavaFxApp extends Application {
 
         Label labelVersionAC = new Label();
         Label labelVersionACP = new Label();
+        Label labelMensajeActualizacionAC = new Label();
+        Label labelMensajeActualizacionACP = new Label();
         Button btnObtenerVersionAC = new Button("Mostrar Versión Calendario de Anime");
         Button btnObtenerVersionACP = new Button("Mostrar Versión Calendario de Anime pro");
         Button btnActualizarVersionAC = new Button("Actualizar Versión Calendario de Anime");
@@ -56,14 +58,16 @@ public class JavaFxApp extends Application {
 
         HBox filaV1 = new HBox(10, btnObtenerVersionAC, labelVersionAC);
         HBox filaV2 = new HBox(10, btnObtenerVersionACP, labelVersionACP);
-        HBox filaActualizarV1 = new HBox(10, btnActualizarVersionAC, txtActualizarVersionAC);
-        HBox filaActualizarV2 = new HBox(10, btnActualizarVersionACP, txtActualizarVersionACP);
+        HBox filaActualizarV1 = new HBox(10, btnActualizarVersionAC, txtActualizarVersionAC,
+                labelMensajeActualizacionAC);
+        HBox filaActualizarV2 = new HBox(10, btnActualizarVersionACP, txtActualizarVersionACP,
+                labelMensajeActualizacionACP);
 
         VBox seccionAC = new VBox(10, filaV1, filaActualizarV1);
         VBox seccionACP = new VBox(10, filaV2, filaActualizarV2);
         VBox contenedor = new VBox(15, seccionAC, seccionACP);
         BorderPane root = new BorderPane();
-        Scene scene = new Scene(root, 475, 500);
+        Scene scene = new Scene(root, 675, 500);
 
         imagenView.setFitHeight(120);
         imagenView.setFitWidth(120);
@@ -77,6 +81,8 @@ public class JavaFxApp extends Application {
 
         labelVersionAC.setStyle("-fx-font-weight: bold;");
         labelVersionACP.setStyle("-fx-font-weight: bold;");
+        labelMensajeActualizacionAC.setStyle("-fx-font-weight: bold;");
+        labelMensajeActualizacionACP.setStyle("-fx-font-weight: bold;");
 
         btnObtenerVersionAC.setStyle("-fx-base: #D8BFD8; -fx-font-size: 11;");
         btnObtenerVersionACP.setStyle("-fx-base: #ADD8E6; -fx-font-size: 11;");
@@ -154,16 +160,16 @@ public class JavaFxApp extends Application {
             Pattern versionRegex = Pattern.compile("^V\\.\\d+\\.\\d+\\.\\d+$");
 
             if (nuevaVersion.isBlank()) {
-                labelVersionAC.setText("Introduce una versión");
+                labelMensajeActualizacionAC.setText("Introduce una versión");
                 return;
             }
 
             if (!versionRegex.matcher(nuevaVersion).matches()) {
-                labelVersionAC.setText("Formato de versión inválido");
+                labelMensajeActualizacionAC.setText("Formato de versión inválido");
                 return;
             }
 
-            labelVersionAC.setText("Actualizando...");
+            labelMensajeActualizacionAC.setText("Cargando...");
 
             Task<DTOActualizacion> task = new Task<>() {
                 @Override
@@ -177,10 +183,14 @@ public class JavaFxApp extends Application {
                 DTOActualizacion resultado = task.getValue();
 
                 if (resultado.isActualizacionExitosa()) {
-                    labelVersionAC.setText("Actualización realizada correctamente");
+                    labelMensajeActualizacionAC.setText("Actualización realizada correctamente");
                 } else {
-                    labelVersionAC.setText("La actualización falló");
+                    labelMensajeActualizacionAC.setText("La actualización falló");
                 }
+            });
+
+            task.setOnFailed(event -> {
+                labelMensajeActualizacionAC.setText("La actualización falló");
             });
 
             new Thread(task).start();
@@ -192,16 +202,16 @@ public class JavaFxApp extends Application {
             Pattern versionRegex = Pattern.compile("^V\\.\\d+\\.\\d+\\.\\d+$");
 
             if (nuevaVersion.isBlank()) {
-                labelVersionACP.setText("Introduce una versión");
+                labelMensajeActualizacionACP.setText("Introduce una versión");
                 return;
             }
 
             if (!versionRegex.matcher(nuevaVersion).matches()) {
-                labelVersionACP.setText("Formato de versión inválido");
+                labelMensajeActualizacionACP.setText("Formato de versión inválido");
                 return;
             }
 
-            labelVersionACP.setText("Actualizando...");
+            labelMensajeActualizacionACP.setText("Cargando...");
 
             Task<DTOActualizacion> task = new Task<>() {
                 @Override
@@ -215,10 +225,14 @@ public class JavaFxApp extends Application {
                 DTOActualizacion resultado = task.getValue();
 
                 if (resultado.isActualizacionExitosa()) {
-                    labelVersionACP.setText("Actualización realizada correctamente");
+                    labelMensajeActualizacionACP.setText("Actualización realizada correctamente");
                 } else {
-                    labelVersionACP.setText("La actualización falló");
+                    labelMensajeActualizacionACP.setText("La actualización falló");
                 }
+            });
+
+            task.setOnFailed(event -> {
+                labelMensajeActualizacionACP.setText("La actualización falló");
             });
 
             new Thread(task).start();
