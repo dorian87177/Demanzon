@@ -5,3 +5,9 @@
 - Poder especificar la url de la api y que se guarde la última usada
 - Cuando inicie la aplicación y se conecte a la api que este pregunte a ping y devuelva un resultado de error o éxito
 - Hacer un ejecutable para el programa
+- Poder copiar la versión que se muestra de anime calendar y anime calendar pro
+- Cambiar el icono del programa de la barra de tareas y de la ventana
+- Ponerle el icono a la comprobación de la conexión de la API
+- Mostrar los errores en la ventana emergente o en un log
+- Mejorar interfaz de escribir URL nueva
+- Implementar elementos visuales de error con URL y conexión API
