@@ -473,20 +473,41 @@ public class JavaFxApp extends Application {
             dialogo.initModality(Modality.APPLICATION_MODAL);
             dialogo.setTitle("Ajustes");
 
+            Label tituloAjustes = new Label("Configuración de la API");
+            tituloAjustes.setStyle("-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #000000;");
+            VBox encabezadoAjustes = new VBox(tituloAjustes);
+            encabezadoAjustes.setAlignment(Pos.CENTER_LEFT);
+            encabezadoAjustes.setPadding(new Insets(15));
+            encabezadoAjustes.setStyle("-fx-background-color: #D0E8F7;");
+
             Label etiqueta = new Label("URL de la API:");
+            etiqueta.setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
             TextField campoUrl = new TextField();
+            campoUrl.setStyle("-fx-font-size: 11; -fx-padding: 8;");
+            campoUrl.setPrefHeight(35);
             String actual = servicioAPI.obtenerUrlBase();
             if (actual != null)
                 campoUrl.setText(actual);
 
             Button botonGuardar = new Button("Guardar");
             Button botonCancelar = new Button("Cancelar");
+            botonGuardar.setStyle("-fx-base: #c9fac9d3; -fx-font-size: 11; -fx-padding: 10 30 10 30;");
+            botonCancelar.setStyle("-fx-base: #D8BFD8; -fx-font-size: 11; -fx-padding: 10 30 10 30;");
 
             HBox cajaBotones = new HBox(10, botonGuardar, botonCancelar);
             cajaBotones.setAlignment(Pos.CENTER_RIGHT);
+            cajaBotones.setPadding(new Insets(10));
 
-            VBox caja = new VBox(10, etiqueta, campoUrl, cajaBotones);
-            caja.setPadding(new Insets(12));
+            VBox contenedorCentral = new VBox(12, etiqueta, campoUrl);
+            contenedorCentral.setPadding(new Insets(20));
+            contenedorCentral.setStyle("-fx-background-color: #E5F0FF;");
+
+            VBox cajaContenido = new VBox(cajaBotones);
+            cajaContenido.setStyle("-fx-background-color: #E5F0FF;");
+            cajaContenido.setPadding(new Insets(0, 20, 15, 20));
+
+            VBox caja = new VBox(encabezadoAjustes, contenedorCentral, cajaContenido);
+            caja.setStyle("-fx-background-color: #E5F0FF;");
 
             botonGuardar.setOnAction(eventoGuardar -> {
                 String nueva = campoUrl.getText();
@@ -499,7 +520,7 @@ public class JavaFxApp extends Application {
 
             botonCancelar.setOnAction(eventoCancelar -> dialogo.close());
 
-            Scene escenaDialogo = new Scene(caja, 480, 140);
+            Scene escenaDialogo = new Scene(caja, 550, 220);
             dialogo.setScene(escenaDialogo);
             dialogo.showAndWait();
         });
