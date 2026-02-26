@@ -577,7 +577,7 @@ public class JavaFxApp extends Application {
 
         if (exito) {
             labelIcono.setText("✓");
-            labelIcono.setStyle("-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: green;");
+            labelIcono.setStyle("-fx-font-size: 18;  -fx-font-weight: bold; -fx-text-fill: green;");
         } else {
             labelIcono.setText("✗");
             labelIcono.setStyle("-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: red;");
