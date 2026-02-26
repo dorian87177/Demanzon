@@ -54,8 +54,8 @@ public class JavaFxApp extends Application {
         HBox encabezado = new HBox(15, imagenView, tituloJapones);
         encabezado.getChildren().addAll(separador, botonAjustes);
 
-        Label labelVersionAC = new Label();
-        Label labelVersionACP = new Label();
+        TextField labelVersionAC = new TextField();
+        TextField labelVersionACP = new TextField();
         Label labelMensajeActualizacionAC = new Label();
         Label labelMensajeActualizacionACP = new Label();
         Label labelIconoActualizacionAC = new Label();
@@ -94,7 +94,7 @@ public class JavaFxApp extends Application {
         VBox seccionPing = new VBox(10, filaPing);
         VBox contenedor = new VBox(15, seccionAC, seccionACP, seccionPing);
         BorderPane root = new BorderPane();
-        Scene scene = new Scene(root, 675, 500);
+        Scene scene = new Scene(root, 700, 500);
 
         imagenView.setFitHeight(120);
         imagenView.setFitWidth(120);
@@ -106,8 +106,14 @@ public class JavaFxApp extends Application {
         encabezado.setPadding(new Insets(15));
         encabezado.setStyle("-fx-background-color: #FFE5F0;");
 
-        labelVersionAC.setStyle("-fx-font-weight: bold;");
-        labelVersionACP.setStyle("-fx-font-weight: bold;");
+        String estiloVersionSeleccionable = "-fx-background-color: transparent; "
+                + "-fx-border-color: transparent; "
+                + "-fx-padding: 0; "
+                + "-fx-font-weight: bold; "
+                + "-fx-focus-color: transparent; "
+                + "-fx-faint-focus-color: transparent;";
+        labelVersionAC.setStyle(estiloVersionSeleccionable);
+        labelVersionACP.setStyle(estiloVersionSeleccionable);
         labelMensajeActualizacionAC.setStyle("-fx-font-weight: bold;");
         labelMensajeActualizacionACP.setStyle("-fx-font-weight: bold;");
         labelIconoActualizacionAC.setStyle("-fx-font-size: 18; -fx-font-weight: bold;");
@@ -126,6 +132,14 @@ public class JavaFxApp extends Application {
 
         txtActualizarVersionAC.setPromptText("Nueva versión normal");
         txtActualizarVersionACP.setPromptText("Nueva versión pro");
+
+        labelVersionAC.setEditable(false);
+        labelVersionAC.setPrefWidth(180);
+        labelVersionAC.setMaxWidth(Region.USE_PREF_SIZE);
+
+        labelVersionACP.setEditable(false);
+        labelVersionACP.setPrefWidth(180);
+        labelVersionACP.setMaxWidth(Region.USE_PREF_SIZE);
 
         filaV1.setAlignment(Pos.CENTER_LEFT);
         filaV2.setAlignment(Pos.CENTER_LEFT);
@@ -163,7 +177,8 @@ public class JavaFxApp extends Application {
             };
 
             task.setOnSucceeded(event -> {
-                labelVersionAC.setText(task.getValue().getVersion());
+                String version = task.getValue().getVersion();
+                labelVersionAC.setText(version);
             });
 
             task.setOnFailed(event -> {
@@ -185,7 +200,8 @@ public class JavaFxApp extends Application {
             };
 
             task.setOnSucceeded(event -> {
-                labelVersionACP.setText(task.getValue().getVersion());
+                String version = task.getValue().getVersion();
+                labelVersionACP.setText(version);
             });
 
             task.setOnFailed(event -> {
@@ -460,7 +476,8 @@ public class JavaFxApp extends Application {
             Label etiqueta = new Label("URL de la API:");
             TextField campoUrl = new TextField();
             String actual = servicioAPI.obtenerUrlBase();
-            if (actual != null) campoUrl.setText(actual);
+            if (actual != null)
+                campoUrl.setText(actual);
 
             Button botonGuardar = new Button("Guardar");
             Button botonCancelar = new Button("Cancelar");
@@ -488,14 +505,14 @@ public class JavaFxApp extends Application {
         });
 
         stage.setTitle("Gestor de Versiones");
-        
+
         try {
             Image icono = new Image(getClass().getResourceAsStream("/images/anime_calendar_logo.png"));
             stage.getIcons().add(icono);
         } catch (Exception e) {
             System.err.println("Error al cargar el icono: " + e.getMessage());
         }
-        
+
         stage.setScene(scene);
         stage.show();
 
@@ -555,4 +572,5 @@ public class JavaFxApp extends Application {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
+
 }
