@@ -1,5 +1,7 @@
 package com.demanzon.app.javafx;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.regex.Pattern;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -18,7 +20,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -257,7 +261,7 @@ public class JavaFxApp extends Application {
             task.setOnFailed(event -> {
                 labelMensajeActualizacionAC.setText("La actualización falló");
                 actualizarIconoEstado(labelIconoActualizacionAC, false);
-                mostrarPopupError("Ocurrió un error al actualizar Anime Calendar");
+                mostrarPopupError("Ocurrió un error al actualizar Anime Calendar", task.getException());
             });
 
             new Thread(task).start();
@@ -309,7 +313,7 @@ public class JavaFxApp extends Application {
             task.setOnFailed(event -> {
                 labelMensajeActualizacionACP.setText("La actualización falló");
                 actualizarIconoEstado(labelIconoActualizacionACP, false);
-                mostrarPopupError("Ocurrió un error al actualizar Anime Calendar pro");
+                mostrarPopupError("Ocurrió un error al actualizar Anime Calendar pro", task.getException());
             });
 
             new Thread(task).start();
@@ -356,7 +360,8 @@ public class JavaFxApp extends Application {
                 } else {
                     labelMensajeActualizacionAC.setText("La actualización falló");
                     actualizarIconoEstado(labelIconoActualizacionAC, false);
-                    mostrarPopupError("Ocurrió un error al realizar la actualización incremental de Anime Calendar");
+                    mostrarPopupError("Ocurrió un error al realizar la actualización incremental de Anime Calendar",
+                            error);
                 }
             });
 
@@ -406,7 +411,8 @@ public class JavaFxApp extends Application {
                     labelMensajeActualizacionACP.setText("La actualización falló");
                     actualizarIconoEstado(labelIconoActualizacionACP, false);
                     mostrarPopupError(
-                            "Ocurrió un error al realizar la actualización incremental de Anime Calendar pro");
+                            "Ocurrió un error al realizar la actualización incremental de Anime Calendar pro",
+                            error);
                 }
             });
 
@@ -444,7 +450,7 @@ public class JavaFxApp extends Application {
                         conexionExitosa.setText("Error al conectar");
                         entornoAPI.setText("");
                         actualizarIconoEstado(labelIconoPing, false);
-                        mostrarPopupErrorConexion("Error: " + ex.getMessage());
+                        mostrarPopupErrorConexion("Error al procesar la respuesta del ping.", ex);
                         ex.printStackTrace();
                     }
                 });
@@ -457,7 +463,7 @@ public class JavaFxApp extends Application {
                     actualizarIconoEstado(labelIconoPing, false);
                     Throwable exception = task.getException();
                     String mensaje = exception != null ? exception.getMessage() : "Error desconocido";
-                    mostrarPopupErrorConexion("No se pudo conectar con la API: " + mensaje);
+                    mostrarPopupErrorConexion("No se pudo conectar con la API: " + mensaje, exception);
                     if (exception != null) {
                         exception.printStackTrace();
                     }
@@ -558,19 +564,56 @@ public class JavaFxApp extends Application {
     }
 
     private void mostrarPopupError(String mensaje) {
+        mostrarPopupError(mensaje, null);
+    }
+
+    private void mostrarPopupError(String mensaje, Throwable error) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText("No se pudo completar la actualización");
         alert.setContentText(mensaje);
+        agregarDetalleError(alert, error);
         alert.showAndWait();
     }
 
     private void mostrarPopupErrorConexion(String mensaje) {
+        mostrarPopupErrorConexion(mensaje, null);
+    }
+
+    private void mostrarPopupErrorConexion(String mensaje, Throwable error) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText("Conexión fallida con la API.");
         alert.setContentText(mensaje);
+        agregarDetalleError(alert, error);
         alert.showAndWait();
+    }
+
+    private void agregarDetalleError(Alert alert, Throwable error) {
+        if (error == null) {
+            return;
+        }
+
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        error.printStackTrace(printWriter);
+
+        TextArea detalleError = new TextArea(stringWriter.toString());
+        detalleError.setEditable(false);
+        detalleError.setWrapText(false);
+        detalleError.setMaxWidth(Double.MAX_VALUE);
+        detalleError.setMaxHeight(Double.MAX_VALUE);
+
+        GridPane.setVgrow(detalleError, Priority.ALWAYS);
+        GridPane.setHgrow(detalleError, Priority.ALWAYS);
+
+        GridPane contenedorDetalle = new GridPane();
+        contenedorDetalle.setMaxWidth(Double.MAX_VALUE);
+        contenedorDetalle.add(new Label("Detalle completo del error:"), 0, 0);
+        contenedorDetalle.add(detalleError, 0, 1);
+
+        alert.getDialogPane().setExpandableContent(contenedorDetalle);
+        alert.getDialogPane().setExpanded(true);
     }
 
 }
